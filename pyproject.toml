@@ -18,6 +18,3 @@ dependencies = [
 dev = [
     "numpy>=2.5.0",
 ]
-
-[tool.setuptools]
-packages = ["segmentacion_clasificacion_estimacion_maiz_comayagua"]
