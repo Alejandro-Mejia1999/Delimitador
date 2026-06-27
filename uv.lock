@@ -1070,14 +1070,10 @@ dependencies = [
     { name = "geopandas" },
     { name = "holoviews" },
     { name = "hvplot" },
+    { name = "numpy" },
     { name = "rasterio" },
     { name = "scikit-learn" },
     { name = "xarray" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "numpy" },
 ]
 
 [package.metadata]
@@ -1086,13 +1082,14 @@ requires-dist = [
     { name = "geopandas", specifier = ">=1.1.4" },
     { name = "holoviews", specifier = ">=1.23.0" },
     { name = "hvplot", specifier = ">=0.12.2" },
+    { name = "numpy", specifier = ">=2.5.0" },
     { name = "rasterio", specifier = ">=1.5.0" },
     { name = "scikit-learn", specifier = ">=1.9.0" },
     { name = "xarray", specifier = ">=2026.4.0" },
 ]
 
 [package.metadata.requires-dev]
-dev = [{ name = "numpy", specifier = ">=2.5.0" }]
+dev = []
 
 [[package]]
 name = "shapely"
