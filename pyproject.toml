@@ -1,0 +1,16 @@
+[project]
+name = "segmentacion-clasificacion-estimacion-maiz-comayagua"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fiona>=1.10.1",
+    "geopandas>=1.1.4",
+    "holoviews>=1.23.0",
+    "hvplot>=0.12.2",
+    "numpy>=2.5.0",
+    "rasterio>=1.5.0",
+    "scikit-learn>=1.9.0",
+    "xarray>=2026.4.0",
+]
