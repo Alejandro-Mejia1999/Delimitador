@@ -50,7 +50,7 @@ def aplicar_whittaker_series(
             valores_preparados = np.nan_to_num(serie_valores, nan=0.0)
             
             # Ejecutar el algoritmo
-            valores_suaves = whittaker.smooth(valores_preparados, pesos)
+            valores_suaves = whittaker.smooth(valores_preparados, weights=pesos)
             
             # Guardar la serie diaria resultante en nuestro DataFrame
             df_resultado[parcela] = valores_suaves
