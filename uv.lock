@@ -1073,6 +1073,7 @@ dependencies = [
     { name = "numpy" },
     { name = "rasterio" },
     { name = "scikit-learn" },
+    { name = "whittaker-eilers" },
     { name = "xarray" },
 ]
 
@@ -1085,6 +1086,7 @@ requires-dist = [
     { name = "numpy", specifier = ">=2.5.0" },
     { name = "rasterio", specifier = ">=1.5.0" },
     { name = "scikit-learn", specifier = ">=1.9.0" },
+    { name = "whittaker-eilers", specifier = ">=0.2.0" },
     { name = "xarray", specifier = ">=2026.4.0" },
 ]
 
@@ -1223,6 +1225,24 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/53/0c/06f8b233b8fd13b9e5ee11424ef85419ba0d8ba0b3138bf360be2ff56953/urllib3-2.7.0.tar.gz", hash = "sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c", size = 433602, upload-time = "2026-05-07T16:13:18.596Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7f/3e/5db95bcf282c52709639744ca2a8b149baccf648e39c8cc87553df9eae0c/urllib3-2.7.0-py3-none-any.whl", hash = "sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897", size = 131087, upload-time = "2026-05-07T16:13:17.151Z" },
+]
+
+[[package]]
+name = "whittaker-eilers"
+version = "0.2.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/8c/93/ca03431eae550202011d5fb4a5ab66545829ae12e82aefa0ff0726c18948/whittaker_eilers-0.2.0.tar.gz", hash = "sha256:65e5e7cd3c9ea0028fe621f3927aa2d61a69688e2df2815010ec35a7c3424879", size = 196615, upload-time = "2024-11-28T18:50:25.958Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/24/64/178bd8c1524cf8125eb8d5b20caee631ef2d642f1e787148bfc8a008d931/whittaker_eilers-0.2.0-cp37-abi3-macosx_10_12_x86_64.whl", hash = "sha256:105e3d7c231fabc928481f5adec62397b87e4143f32793c36bbd99352c553e50", size = 408105, upload-time = "2024-11-28T18:50:10.834Z" },
+    { url = "https://files.pythonhosted.org/packages/ec/e4/bf2f476e9dfc9889dbf1102f37d9ea11ac028d56d5ae2436942c09c43056/whittaker_eilers-0.2.0-cp37-abi3-macosx_11_0_arm64.whl", hash = "sha256:3c64d2f215736d8c9c86c5425b1cf40809bac413584c6d7d1bb559ba7491cd9e", size = 384951, upload-time = "2024-11-28T18:50:12.105Z" },
+    { url = "https://files.pythonhosted.org/packages/4a/52/4de88b97bf9b6acbf76d339d52e2ac46f65cb9f63e8ba5049f3c42ce4824/whittaker_eilers-0.2.0-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6822bfcbd4a1bb6fae7189f1d6e245988546e96cdc9a794b343c303a06838a6e", size = 443792, upload-time = "2024-11-28T18:50:13.298Z" },
+    { url = "https://files.pythonhosted.org/packages/f8/3a/5a303dbd6516634d431284ab1d7b24be13a5e5afa1b070d9c7ec08d1b424/whittaker_eilers-0.2.0-cp37-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:d548abdc197bce1c180fe3d33f8d3318143ab16db160eee2eb56b5b12f35fbb7", size = 445414, upload-time = "2024-11-28T18:50:14.525Z" },
+    { url = "https://files.pythonhosted.org/packages/1a/17/83f4ab6967b76eaa1cbf942e799d198ff293395f39a17a6db4db53fbaa5a/whittaker_eilers-0.2.0-cp37-abi3-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:e02c484264875311321552fee00b39c40723c46867ac6bc17f4c46accd3ba258", size = 494818, upload-time = "2024-11-28T18:50:15.806Z" },
+    { url = "https://files.pythonhosted.org/packages/32/e6/e9e853bb620cd5fad2580cb0231ac460199b3ca49cbe1a16eb8a87acd72b/whittaker_eilers-0.2.0-cp37-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:cc1488b9bd446cd3323c068f331b20d27e8e9383d8c06aa946b3550f75161e8f", size = 521458, upload-time = "2024-11-28T18:50:17.679Z" },
+    { url = "https://files.pythonhosted.org/packages/be/86/c27f3f0b95b877ed802a630af52212d25828cc12932561843547307d9c1b/whittaker_eilers-0.2.0-cp37-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:806bfcc6d76bce17c4a64291cc8e76a1c2bafa34103058bd4721fa3bc3c6e268", size = 513275, upload-time = "2024-11-28T18:50:19.851Z" },
+    { url = "https://files.pythonhosted.org/packages/51/f2/fa9fa022c9aba868107874d2a29550c6ce2dbcea647f51f338195192d869/whittaker_eilers-0.2.0-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3002697548ccd84ebbe786da1cfebc1ce934c2d49ecd2669ca2351cb0a62d934", size = 462340, upload-time = "2024-11-28T18:50:21.111Z" },
+    { url = "https://files.pythonhosted.org/packages/65/72/6624d48f4856ee0002c5fcd15edc45b92c5bc210946f15e0f970487113d5/whittaker_eilers-0.2.0-cp37-abi3-win32.whl", hash = "sha256:e925e52196e3a0888f9b71730b6d3cbce0ebbccd6553a136680904c09230bf00", size = 269633, upload-time = "2024-11-28T18:50:23.017Z" },
+    { url = "https://files.pythonhosted.org/packages/c9/64/3448ed48760f26e9e3fedd33b9030e74e6711cc57b0f1da73253790153f5/whittaker_eilers-0.2.0-cp37-abi3-win_amd64.whl", hash = "sha256:b39d462d3f5919b7bf5dccc812c838f72d4c0d73a8e3ea5bdb1fc834eeebba0f", size = 287326, upload-time = "2024-11-28T18:50:24.803Z" },
 ]
 
 [[package]]

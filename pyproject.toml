@@ -12,6 +12,7 @@ dependencies = [
     "numpy>=2.5.0",
     "rasterio>=1.5.0",
     "scikit-learn>=1.9.0",
+    "whittaker-eilers>=0.2.0",
     "xarray>=2026.4.0",
 ]
 
