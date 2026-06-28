@@ -1,7 +1,7 @@
 import os
 import xarray as xr
 
-def descargar_datacube(datacube, ruta_netcdf="cubo_temporal_rgb.nc", formato="NetCDF"):
+def descargar_datacube(datacube, ruta_netcdf, formato="NetCDF"):
     """
     Descarga un datacube desde openEO y lo guarda como archivo NetCDF.
     
