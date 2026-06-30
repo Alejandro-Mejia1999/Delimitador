@@ -13,8 +13,10 @@ Uso como módulo:
 """
 from __future__ import annotations
 
-import openeo
 import geopandas as gpd
+import numpy as np
+import openeo
+import pandas as pd
 
 from utils.dict_a_dataframe import openeo_dict_to_dataframes
 
@@ -211,6 +213,139 @@ def obtener_datacube_indices_crudo(
 
     print("✅  Ingesta completada.")
     return dfs_vpm
+
+
+def _convertir_temperatura(val_raw: float | int | str) -> float:
+    """
+    AgERA5 entrega temperatura ×100 en Kelvin → convertir a °C.
+    """
+    t_kelvin = float(val_raw) / 100.0 if float(val_raw) > 1000.0 else float(val_raw)
+    return t_kelvin - 273.15
+
+
+def obtener_datos_climaticos_crudo(
+    connection: openeo.Connection,
+    geojson_openeo: dict,
+    fecha_inicio: str,
+    fecha_fin: str,
+    num_parc: int | None = None,
+) -> dict[str, pd.DataFrame]:
+    """
+    Descarga series temporales de variables meteorológicas (AgERA5)
+    para el centroide de la zona de estudio, y las difunde a todas las parcelas.
+
+    El pipeline realiza:
+    1. Extracción del centroide regional.
+    2. Creación de un bounding box y polígono regional (~11 km de resolución).
+    3. Solicitud de cubo de datos 'AGERA5' con las bandas 'temperature-mean' y 'solar-radiation-flux'.
+    4. Reducción espacial regional (media) y descarga local a memoria.
+    5. Conversión de temperatura de Kelvin (multiplicado por 100) a grados Celsius.
+    6. Difusión (broadcast) de la serie de tiempo única a todas las parcelas.
+
+    Parámetros
+    ----------
+    connection : openeo.Connection
+        Conexión activa y autenticada al backend CDSE de openEO.
+    geojson_openeo : dict
+        GeoJSON con las geometrías de las parcelas en EPSG:4326.
+    fecha_inicio : str
+        Fecha de inicio del ciclo en formato ISO "YYYY-MM-DD".
+    fecha_fin : str
+        Fecha de fin del ciclo en formato ISO "YYYY-MM-DD".
+    num_parc : int, opcional
+        Número de parcelas. Si es None, se infiere del GeoJSON (features).
+
+    Retorna
+    -------
+    dict[str, pd.DataFrame]
+        Un diccionario con dos DataFrames:
+        - "temperature-mean": DataFrame con DatetimeIndex x columnas de parcelas.
+        - "solar-radiation-flux": DataFrame con DatetimeIndex x columnas de parcelas.
+    """
+    print("🌍 1. Extrayendo el centroide regional para la grilla climática de AGERA5...")
+    try:
+        if "features" in geojson_openeo:
+            coords = [f["geometry"]["coordinates"] for f in geojson_openeo["features"]]
+            lon_centro = coords[0][0][0][0] if isinstance(coords[0][0][0], list) else coords[0][0][0]
+            lat_centro = coords[0][0][0][1] if isinstance(coords[0][0][0], list) else coords[0][0][1]
+        else:
+            lon_centro, lat_centro = -87.6877, 14.4098
+    except Exception:
+        lon_centro, lat_centro = -87.6877, 14.4098
+
+    bbox_climatico = {
+        "west": lon_centro - 0.05,
+        "east": lon_centro + 0.05,
+        "south": lat_centro - 0.05,
+        "north": lat_centro + 0.05
+    }
+
+    w, e, s, n = bbox_climatico["west"], bbox_climatico["east"], bbox_climatico["south"], bbox_climatico["north"]
+    geojson_aggregate = {
+        "type": "Polygon",
+        "coordinates": [[
+            [w, s],
+            [e, s],
+            [e, n],
+            [w, n],
+            [w, s]
+        ]]
+    }
+
+    temp_ext = [fecha_inicio, fecha_fin]
+
+    print("🌍 2. Solicitando cubo de datos al catálogo federado (AGERA5)...")
+    cube_clima = connection.load_collection(
+        "AGERA5",
+        spatial_extent=bbox_climatico,
+        temporal_extent=temp_ext,
+        bands=["temperature-mean", "solar-radiation-flux"]
+    )
+
+    print("📊 3. Ejecutando reducción espacial sobre el polígono regional GeoJSON...")
+    cube_clima_promedios = cube_clima.aggregate_spatial(
+        geometries=geojson_aggregate,
+        reducer="mean"
+    )
+
+    print("⏳ 4. Descargando series de tiempo climáticas...")
+    diccionario_clima = cube_clima_promedios.execute()
+
+    fechas_clima = sorted(list(diccionario_clima.keys()))
+    print(f"📅 ¡Éxito! Total de fechas recuperadas del servidor federado: {len(fechas_clima)}")
+
+    dfs_clima = openeo_dict_to_dataframes(
+        diccionario=diccionario_clima,
+        nombres_bandas=["temperature-mean", "solar-radiation-flux"],
+        transformaciones={
+            "temperature-mean": _convertir_temperatura
+        }
+    )
+
+    if num_parc is None:
+        if isinstance(geojson_openeo, dict) and "features" in geojson_openeo:
+            num_parc = len(geojson_openeo["features"])
+        else:
+            num_parc = 1
+
+    # AgERA5 resolución ~11 km: todas las parcelas caen en el mismo píxel regional.
+    # Se hace broadcast explícito de la serie única a todas las parcelas.
+    _cols_parcelas = [f"Parcela_{i+1}" for i in range(num_parc)]
+
+    df_t2m = dfs_clima["temperature-mean"].iloc[:, [0] * num_parc].copy()
+    df_t2m.columns = _cols_parcelas
+
+    df_ssrd = dfs_clima["solar-radiation-flux"].iloc[:, [0] * num_parc].copy()
+    df_ssrd.columns = _cols_parcelas
+
+    print("\n✅ Datos climáticos consolidados de forma segura:")
+    print(f"   ✔️ Temperatura Media del Dataset: {df_t2m.mean().mean():.2f} °C")
+    print(f"   ✔️ Radiación Media del Dataset: {df_ssrd.mean().mean() / 1e6:.2f} MJ/m²/día")
+
+    return {
+        "temperature-mean": df_t2m,
+        "solar-radiation-flux": df_ssrd
+    }
 
 
 if __name__ == "__main__":
