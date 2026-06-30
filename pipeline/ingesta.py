@@ -237,5 +237,5 @@ if __name__ == "__main__":
     )
 
     for banda, df in dfs.items():
-        print(f"\n{banda}: {df.shape[0]} fechas × {df.shape[1]} parcelas")
+        print(f"\n{banda}: {df.shape[0]} fechas x {df.shape[1]} parcelas")
         print(df.head())

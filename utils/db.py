@@ -75,16 +75,18 @@ def seeding(rutaGJSON: str) -> None:
     """
     Inicializa el GeoPackage: carga las parcelas y crea las tablas auxiliares.
 
-    El archivo .gpkg se escribe primero con geopandas/pyogrio (handle GDAL) y
-    la conexión SQLite se abre DESPUÉS de que ese handle se cierra.
-    En Windows ambos handles no pueden coexistir sobre el mismo archivo.
+    Orden obligatorio en Windows:
+    1. Escribir geometrías con geopandas/pyogrio (handle GDAL).
+    2. Abrir SQLite DESPUÉS de que GDAL liberó el archivo.
+    GDAL y SQLite no pueden tener el archivo abierto simultáneamente para escritura.
+
+    WAL mode se activa aquí para que las escrituras futuras del pipeline
+    no bloqueen las lecturas de Streamlit.
     """
     # 1. Escribir geometrías — GDAL abre y cierra el archivo aquí
     actualizar_gpkg(rutaGJSON, "replace")
 
     # 2. Abrir SQLite solo después de que GDAL liberó el archivo.
-    #    closing() garantiza conn.close() al salir del with.
-    #    El with conn: interno hace commit/rollback automático.
     with closing(get_connection_raw()) as conn:
         with conn:
             conn.execute("""
