@@ -117,3 +117,69 @@ def detectar_sos(
         "amplitud": amplitud,
         "umbral": umbral,
     }
+
+    def detectar_sos_por_parcela(
+        resultado_preprocesamiento: dict[str, pd.DataFrame],
+        indice: str = "EVI",
+        factor: float = 0.2,
+        metodo: str = "seasonal_amplitude",
+        ventanas_busqueda: dict[str, tuple] | tuple | None = None,
+    ) -> pd.DataFrame:
+        """
+        Ejecuta detectar_sos para cada parcela presente en el resultado de
+        preprocesar_indices_vpm, y consolida los resultados en un DataFrame.
+
+        Parámetros
+        ----------
+        resultado_preprocesamiento : dict[str, pd.DataFrame]
+            Salida de preprocesar_indices_vpm.
+        indice : str, opcional
+            "EVI" o "LSWI" (por defecto "EVI").
+        factor : float, opcional
+            Ver detectar_sos.
+        metodo : str, opcional
+            Ver detectar_sos.
+        ventanas_busqueda : dict[str, tuple] | tuple | None, opcional
+            - dict: mapea id_parcela -> (fecha_ini, fecha_fin), para ventanas
+            específicas por parcela (ej. centradas en mediana histórica de SOS).
+            - tuple: misma ventana aplicada a todas las parcelas.
+            - None: sin restricción de ventana.
+
+        Retorna
+        -------
+        pd.DataFrame
+            Una fila por parcela, columnas: id_parcela, sos_fecha, sos_valor,
+            pos_fecha, pos_valor, base_valor, amplitud, umbral.
+            Parcelas sin datos válidos quedan con columnas en None/NaN pero
+            siempre aparecen en el resultado (no se descartan silenciosamente).
+        """
+        df = resultado_preprocesamiento[indice]
+        filas = []
+
+        for id_parcela in df.columns:
+            try:
+                serie, fechas = extraer_serie_para_sos(
+                    resultado_preprocesamiento, id_parcela, indice=indice
+                )
+            except ValueError:
+                # Parcela sin ninguna observación válida en el rango disponible
+                filas.append({"id_parcela": id_parcela, "sos_fecha": None,
+                            "sos_valor": None, "pos_fecha": None, "pos_valor": None,
+                            "base_valor": None, "amplitud": None, "umbral": None})
+                continue
+
+            if isinstance(ventanas_busqueda, dict):
+                ventana = ventanas_busqueda.get(id_parcela)
+            else:
+                ventana = ventanas_busqueda
+
+            resultado = detectar_sos(
+                serie=serie, fechas=fechas, factor=factor,
+                metodo=metodo, ventana_busqueda=ventana,
+            )
+            resultado["id_parcela"] = id_parcela
+            filas.append(resultado)
+
+        columnas_orden = ["id_parcela", "sos_fecha", "sos_valor", "pos_fecha",
+                        "pos_valor", "base_valor", "amplitud", "umbral"]
+        return pd.DataFrame(filas)[columnas_orden]
