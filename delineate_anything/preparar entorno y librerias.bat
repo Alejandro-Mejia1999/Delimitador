@@ -6,11 +6,14 @@ echo =====================================================================
 echo [1/4] Limpiando configuracion de Conda y bloqueando canales comerciales
 echo =====================================================================
 
-:: Detectar ruta de Miniconda del usuario
-set "CONDA_DIR=%USERPROFILE%\miniconda3"
+:: Detectar ruta de Anaconda o Miniconda del usuario
+set "CONDA_DIR=%USERPROFILE%\anaconda3"
+if not exist "%CONDA_DIR%\Scripts\conda.exe" set "CONDA_DIR=%USERPROFILE%\Anaconda3"
+if not exist "%CONDA_DIR%\Scripts\conda.exe" set "CONDA_DIR=%USERPROFILE%\miniconda3"
+
 if not exist "%CONDA_DIR%\Scripts\conda.exe" (
-    echo [ERROR] No se encontro Miniconda en %CONDA_DIR%.
-    echo Por favor, edita este script con la ruta correcta.
+    echo [ERROR] No se encontro Anaconda ni Miniconda en tu perfil de usuario.
+    echo Por favor, abre el script y escribe la ruta manual en CONDA_DIR.
     pause
     exit /b 1
 )

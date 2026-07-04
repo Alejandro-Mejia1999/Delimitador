@@ -12,7 +12,8 @@ DELINEATE_BATCH_CONFIG = DELINEATE_ANYTHING_ROOT / "batch_sample.yaml"
 DELINEATE_SCRIPT = DELINEATE_ANYTHING_ROOT / "delineate.py"
 
 # En lugar de buscar un .venv local, apuntamos dinámicamente al Conda del sistema
-CONDA_EXE = os.environ.get("CONDA_EXE", r"C:\Users\mayno\miniconda3\Scripts\conda.exe")
+CONDA_EXE = os.environ.get("CONDA_EXE", r"C:\Users\USER\anaconda3\Scripts\conda.exe")
+#CONDA_EXE = os.environ.get("CONDA_EXE", r"C:\Users\mayno\miniconda3\Scripts\conda.exe")
 CONDA_ENV_NAME = "tesis_maiz"
 
 
