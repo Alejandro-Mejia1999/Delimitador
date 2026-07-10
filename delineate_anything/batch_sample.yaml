@@ -5,7 +5,7 @@ data_root: data/images
 output_root: data/delineated
 temp_root: data/temp
 keep_temp: false
-mask_root: data/masks
+mask_root: data/masks       # Aquí debe estar Sample.tif (descargado con generar_mascara_lclu.py)
 
 # null if use all subfolders or exclude is not null
 include: 

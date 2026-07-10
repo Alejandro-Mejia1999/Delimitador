@@ -15,9 +15,9 @@ super_resolution: null
 treat_as_vrt: false
 
 mask_info:
-  range: 24               # Number of classes in the mask, or null if it includes negative values
-  filter_classes: []  # Classes used to remove whole polygons on overlap
-  clip_classes: []        # Classes used to clip overlapping polygon areas
+  range: 100              # Dynamic World: clases 0-8 + nodata 99
+  filter_classes: [6, 7]  # 6=Urbano, 7=Suelo desnudo (captura solares baldíos)
+  clip_classes: [0]        # 0=Agua: recorta bordes de parcelas sobre agua
 
 background_info:
   # Add these classes as the background to the delineated fields to cover regions in case of model failure

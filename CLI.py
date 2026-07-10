@@ -234,6 +234,16 @@ def _accion_append_parcelas() -> None:
     _ok("Parcelas agregadas.")
     _pausar()
 
+#def _accion_delinear() -> None:
+ #   _seccion("Delineate-Anything — segmentación automática")
+  #  _warn("Este es un proceso pesado, tardará aprox. 1 hora ejecutándose con CPU")
+   # confirmar = _pedir("¿Continuar? (s/n)", "n")
+    #if confirmar.lower() != "s":
+     #   return
+    #from pipeline.modulo_parcelas import ejecutar_delineate_anything_local
+   # ejecutar_delineate_anything_local()
+    #_ok("Delineación completada.")
+    #_pausar()
 def _accion_delinear() -> None:
     _seccion("Delineate-Anything — segmentación automática")
     _warn("Este es un proceso pesado, tardará aprox. 1 hora ejecutándose con CPU")
