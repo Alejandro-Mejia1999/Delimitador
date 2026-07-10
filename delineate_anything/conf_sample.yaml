@@ -17,7 +17,7 @@ treat_as_vrt: false
 mask_info:
   range: 100              # Dynamic World: clases 0-8 + nodata 99
   filter_classes: [0, 1, 2, 3, 5, 6, 7, 8]  # Solo cultivos (4); excluye: Agua, Árboles, Pasto, Veg.inundada, Arbustos, Urbano, Suelo desnudo, Nieve
-  clip_classes: null
+  clip_classes: []
 
 background_info:
   # Add these classes as the background to the delineated fields to cover regions in case of model failure
