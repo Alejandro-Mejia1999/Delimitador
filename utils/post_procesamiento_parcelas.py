@@ -13,8 +13,8 @@ import numpy as np
 import geopandas as gpd
 from pathlib import Path
 
-
 CRS_METRICO = "EPSG:32616"
+
 
 def filtrar_parcelas_por_area(
     geodf: gpd.GeoDataFrame,
@@ -179,10 +179,6 @@ def calcular_ndvi_por_parcela(
     
     Returns:
         Array 1D con NDVI medio por parcela
-    
-    Ejemplo:
-        >>> ndvi_valores = calcular_ndvi_por_parcela(gdf, red_band, nir_band)
-        >>> gdf['ndvi'] = ndvi_valores
     """
     import rasterio.mask
     from rasterio.transform import from_bounds
@@ -190,17 +186,13 @@ def calcular_ndvi_por_parcela(
     if geodf.empty:
         return np.array([])
     
-    # Crear transformación raster (asume esquina superior-izquierda)
-    # Se asume que red/nir son arrays 2D con resolución 10m
     n_rows, n_cols = red.shape
-    # Bounds ficticios (ajusta si tienes bounds reales)
     transform = from_bounds(0, 0, n_cols * 10, n_rows * 10, n_rows, n_cols)
     
     ndvi_list = []
     
     for idx, row in geodf.iterrows():
         try:
-            # Crear máscara para este polígono
             mask = rasterio.mask.geometry_mask(
                 [row.geometry],
                 out_shape=red.shape,
@@ -208,7 +200,6 @@ def calcular_ndvi_por_parcela(
                 transform=transform,
             )
             
-            # Extraer píxeles dentro del polígono
             red_px = red[mask]
             nir_px = nir[mask]
             
@@ -216,7 +207,6 @@ def calcular_ndvi_por_parcela(
                 ndvi_list.append(np.nan)
                 continue
             
-            # Calcular NDVI
             ndvi = (nir_px.astype(float) - red_px.astype(float)) / \
                    (nir_px.astype(float) + red_px.astype(float) + 1e-8)
             
@@ -250,31 +240,23 @@ def filtrar_parcelas_por_ndvi(
     
     Returns:
         GeoDataFrame filtrado (solo parcelas con NDVI >= ndvi_minimo)
-    
-    Ejemplo:
-        >>> gdf_verde = filtrar_parcelas_por_ndvi(gdf, red_band, nir_band, ndvi_minimo=0.25)
-        >>> print(f"Parcelas con vegetación: {len(gdf_verde)} / {len(gdf)}")
     """
     if geodf.empty:
         return geodf.copy()
     
     n_antes = len(geodf)
     
-    # Calcular NDVI
     ndvi_vals = calcular_ndvi_por_parcela(
         geodf, red, nir, verbose=verbose
     )
     
-    # Filtrar
     geodf_copia = geodf.copy()
     geodf_copia['ndvi'] = ndvi_vals
     
-    # Solo mantener parcelas con NDVI válido y >= umbral
     geodf_filtrado = geodf_copia[
         (geodf_copia['ndvi'].notna()) & (geodf_copia['ndvi'] >= ndvi_minimo)
     ].copy()
     
-    # Opcional: drop la columna ndvi si no la necesitas después
     geodf_filtrado = geodf_filtrado.drop(columns=['ndvi'])
     
     n_despues = len(geodf_filtrado)
@@ -311,22 +293,6 @@ def procesar_parcelas_segmentadas(
     
     Returns:
         GeoDataFrame limpio con parcelas validadas
-    
-    Ejemplo:
-        >>> # Solo filtro por área
-        >>> gdf_limpio = procesar_parcelas_segmentadas(
-        ...     gdf_crudo,
-        ...     area_minima_m2=800
-        ... )
-        >>> 
-        >>> # Filtro completo con NDVI
-        >>> gdf_limpio = procesar_parcelas_segmentadas(
-        ...     gdf_crudo,
-        ...     red=red_band,
-        ...     nir=nir_band,
-        ...     area_minima_m2=800,
-        ...     ndvi_minimo=0.25
-        ... )
     """
     if verbose:
         print(f"\n🔍 Procesando {len(geodf_crudas)} parcelas segmentadas...")
@@ -337,7 +303,7 @@ def procesar_parcelas_segmentadas(
         area_minima_m2=area_minima_m2,
     )
 
-    # Paso 2: Filtro por compacidad (opcional, pero activo por defecto)
+    # Paso 2: Filtro por compacidad
     gdf = filtrar_parcelas_por_compacidad(
         gdf,
         umbral_compacidad=umbral_compacidad,
